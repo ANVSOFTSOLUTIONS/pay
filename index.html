@@ -28,6 +28,9 @@
     #qr { display: inline-block; background: #fff; padding: 10px; border-radius: 12px; margin-top: 6px; }
     #qr img { display: block; width: 210px; height: 210px; image-rendering: pixelated; }
     .copy { margin-top: 10px; border: 1px solid var(--line); background: transparent; color: var(--text); border-radius: 10px; padding: 9px 14px; font: inherit; cursor: pointer; }
+    .part { margin-top: 10px; border: 1px solid var(--line); background: transparent; color: var(--brand); border-radius: 10px; padding: 9px 14px; font: inherit; font-weight: 700; cursor: pointer; }
+    .partbox { margin-top: 10px; display: flex; gap: 8px; justify-content: center; align-items: center; }
+    .partbox input { width: 150px; font: inherit; font-size: 22px; font-weight: 700; padding: 8px 10px; border: 2px solid var(--brand); border-radius: 10px; background: var(--card); color: var(--text); text-align: center; }
     .err { background: #fde9e6; color: #c8372d; border-radius: 14px; padding: 16px; text-align: center; }
   </style>
 </head>
@@ -41,6 +44,9 @@
         <div class="amt-label">Amount to pay / చెల్లించాల్సిన మొత్తం</div>
         <div class="amt" id="amt"></div>
         <div class="note" id="note"></div>
+        <button class="part" id="partbtn">Pay part amount / కొంత మొత్తం కట్టండి</button>
+        <div class="partbox" id="partbox" hidden>₹ <input id="partin" type="number" inputmode="decimal" min="1" step="0.01"></div>
+        <div class="note" id="partmsg"></div>
       </div>
       <div style="height:14px"></div>
       <a id="pp" class="btn phonepe"><span class="logo">पे</span>Pay with PhonePe</a>
@@ -69,24 +75,45 @@
       document.getElementById("ok").hidden = false;
 
       var enc = encodeURIComponent;
-      var q = "pa=" + enc(pa) + "&pn=" + enc(pn || sh || "Shop") + (am > 0 ? "&am=" + am.toFixed(2) : "") + "&cu=INR" + (tn ? "&tn=" + enc(tn) : "");
       var android = /Android/i.test(navigator.userAgent);
       var ios = /iPhone|iPad|iPod/i.test(navigator.userAgent);
-      var intent = function (pkg) { return "intent://pay?" + q + "#Intent;scheme=upi;package=" + pkg + ";end"; };
-      document.getElementById("pp").href = android ? intent("com.phonepe.app") : ios ? "phonepe://pay?" + q : "upi://pay?" + q;
-      document.getElementById("gp").href = android ? intent("com.google.android.apps.nbu.paisa.user") : ios ? "gpay://upi/pay?" + q : "upi://pay?" + q;
+      var fmt = function (n) { return "₹" + n.toLocaleString("en-IN", { maximumFractionDigits: 2 }); };
+      qrcode.stringToBytes = qrcode.stringToBytesFuncs["UTF-8"];
+
+      function render(pay) {
+        var q = "pa=" + enc(pa) + "&pn=" + enc(pn || sh || "Shop") + (pay > 0 ? "&am=" + pay.toFixed(2) : "") + "&cu=INR" + (tn ? "&tn=" + enc(tn) : "");
+        var intent = function (pkg) { return "intent://pay?" + q + "#Intent;scheme=upi;package=" + pkg + ";end"; };
+        document.getElementById("pp").href = android ? intent("com.phonepe.app") : ios ? "phonepe://pay?" + q : "upi://pay?" + q;
+        document.getElementById("gp").href = android ? intent("com.google.android.apps.nbu.paisa.user") : ios ? "gpay://upi/pay?" + q : "upi://pay?" + q;
+        var qr = qrcode(0, "M");
+        qr.addData("upi://pay?" + q);
+        qr.make();
+        document.getElementById("qr").innerHTML = qr.createImgTag(6, 0);
+        document.getElementById("partmsg").textContent = pay > 0 && pay < am
+          ? "Paying " + fmt(pay) + " now · Balance " + fmt(Math.round((am - pay) * 100) / 100) + " / మిగిలిన బాకీ"
+          : "";
+      }
 
       document.getElementById("shop").textContent = sh || pn;
       document.getElementById("to").textContent = "UPI: " + pa;
-      document.getElementById("amt").textContent = am > 0 ? "₹" + am.toLocaleString("en-IN", { maximumFractionDigits: 2 }) : "—";
+      document.getElementById("amt").textContent = am > 0 ? fmt(am) : "—";
       document.getElementById("note").textContent = tn;
       document.title = (sh || pn) + " – ₹" + am;
+      render(am);
 
-      qrcode.stringToBytes = qrcode.stringToBytesFuncs["UTF-8"];
-      var qr = qrcode(0, "M");
-      qr.addData("upi://pay?" + q);
-      qr.make();
-      document.getElementById("qr").innerHTML = qr.createImgTag(6, 0);
+      var partbtn = document.getElementById("partbtn"), partin = document.getElementById("partin");
+      if (!(am > 0)) partbtn.hidden = true;
+      partin.max = am;
+      partbtn.onclick = function () {
+        partbtn.hidden = true;
+        document.getElementById("partbox").hidden = false;
+        partin.value = "";
+        partin.focus();
+      };
+      partin.oninput = function () {
+        var v = Math.round(Number(partin.value) * 100) / 100;
+        render(v > 0 && v < am ? v : am);
+      };
 
       document.getElementById("copy").onclick = function () {
         var b = this;
