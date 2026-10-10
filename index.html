@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Pay your due / బాకీ చెల్లించండి</title>
+  <style>
+    :root { --brand: #0f7b5f; --text: #1b1f1d; --muted: #69716c; --line: #e2e6e1; --bg: #f2f4f1; --card: #fff; }
+    @media (prefers-color-scheme: dark) { :root { --text: #e9eeeb; --muted: #94a09a; --line: #2b322e; --bg: #111513; --card: #1b201d; } }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.45 "Noto Sans Telugu", "Noto Sans", system-ui, sans-serif; }
+    .wrap { max-width: 440px; margin: 0 auto; padding: 18px 16px 32px; display: flex; flex-direction: column; gap: 14px; }
+    .card { background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 18px; text-align: center; }
+    .shop { font-size: 20px; font-weight: 800; }
+    .to { color: var(--muted); font-size: 14px; word-break: break-all; }
+    .amt-label { color: var(--muted); font-size: 14px; margin-top: 10px; }
+    .amt { font-size: 44px; font-weight: 800; color: #c8372d; line-height: 1.15; }
+    .note { color: var(--muted); font-size: 14px; }
+    .btn { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 16px; border-radius: 14px;
+           font-size: 18px; font-weight: 700; text-decoration: none; color: #fff; border: none; cursor: pointer; }
+    .phonepe { background: #5f259f; }
+    .gpay { background: #1a73e8; }
+    .logo { width: 30px; height: 30px; border-radius: 8px; background: #fff; display: grid; place-items: center; font-size: 15px; font-weight: 900; }
+    .phonepe .logo { color: #5f259f; }
+    .gpay .logo { color: #1a73e8; }
+    .help { color: var(--muted); font-size: 13.5px; text-align: center; margin: 0; }
+    #qr { display: inline-block; background: #fff; padding: 10px; border-radius: 12px; margin-top: 6px; }
+    #qr img { display: block; width: 210px; height: 210px; image-rendering: pixelated; }
+    .copy { margin-top: 10px; border: 1px solid var(--line); background: transparent; color: var(--text); border-radius: 10px; padding: 9px 14px; font: inherit; cursor: pointer; }
+    .err { background: #fde9e6; color: #c8372d; border-radius: 14px; padding: 16px; text-align: center; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div id="bad" class="err" hidden>This link is not valid. Please ask the shop to send it again.<br>ఈ లింక్ సరిగా లేదు. షాప్ వారిని మళ్లీ పంపమని అడగండి.</div>
+    <div id="ok" hidden>
+      <div class="card">
+        <div class="shop" id="shop"></div>
+        <div class="to" id="to"></div>
+        <div class="amt-label">Amount to pay / చెల్లించాల్సిన మొత్తం</div>
+        <div class="amt" id="amt"></div>
+        <div class="note" id="note"></div>
+      </div>
+      <div style="height:14px"></div>
+      <a id="pp" class="btn phonepe"><span class="logo">पे</span>Pay with PhonePe</a>
+      <div style="height:10px"></div>
+      <a id="gp" class="btn gpay"><span class="logo">G</span>Pay with Google Pay</a>
+      <p class="help" style="margin-top:12px">Tap a button — the app opens. Check the amount and enter your UPI PIN.<br>బటన్ నొక్కితే యాప్ తెరుచుకుంటుంది — మొత్తం చూసి UPI PIN ఎంటర్ చేయండి.</p>
+      <div style="height:14px"></div>
+      <div class="card">
+        <div class="note">Or scan this QR with another phone / లేదా వేరే ఫోన్‌తో ఈ QR స్కాన్ చేయండి</div>
+        <div id="qr"></div>
+        <div><button class="copy" id="copy">Copy UPI ID</button></div>
+      </div>
+    </div>
+  </div>
+  <script src="qrcode.js"></script>
+  <script>
+    (function () {
+      var p = new URLSearchParams(location.search);
+      var pa = (p.get("pa") || "").trim();
+      var pn = (p.get("pn") || "").trim();
+      var sh = (p.get("sh") || pn).trim();
+      var am = Number(p.get("am") || 0);
+      var tn = (p.get("tn") || "").trim();
+      if (!/^[\w.\-]{2,}@[\w.\-]{2,}$/.test(pa)) { document.getElementById("bad").hidden = false; return; }
+      document.getElementById("ok").hidden = false;
+
+      var enc = encodeURIComponent;
+      var q = "pa=" + enc(pa) + "&pn=" + enc(pn || sh || "Shop") + (am > 0 ? "&am=" + am.toFixed(2) : "") + "&cu=INR" + (tn ? "&tn=" + enc(tn) : "");
+      var android = /Android/i.test(navigator.userAgent);
+      var ios = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+      var intent = function (pkg) { return "intent://pay?" + q + "#Intent;scheme=upi;package=" + pkg + ";end"; };
+      document.getElementById("pp").href = android ? intent("com.phonepe.app") : ios ? "phonepe://pay?" + q : "upi://pay?" + q;
+      document.getElementById("gp").href = android ? intent("com.google.android.apps.nbu.paisa.user") : ios ? "gpay://upi/pay?" + q : "upi://pay?" + q;
+
+      document.getElementById("shop").textContent = sh || pn;
+      document.getElementById("to").textContent = "UPI: " + pa;
+      document.getElementById("amt").textContent = am > 0 ? "₹" + am.toLocaleString("en-IN", { maximumFractionDigits: 2 }) : "—";
+      document.getElementById("note").textContent = tn;
+      document.title = (sh || pn) + " – ₹" + am;
+
+      qrcode.stringToBytes = qrcode.stringToBytesFuncs["UTF-8"];
+      var qr = qrcode(0, "M");
+      qr.addData("upi://pay?" + q);
+      qr.make();
+      document.getElementById("qr").innerHTML = qr.createImgTag(6, 0);
+
+      document.getElementById("copy").onclick = function () {
+        var b = this;
+        (navigator.clipboard ? navigator.clipboard.writeText(pa) : Promise.reject()).then(
+          function () { b.textContent = "Copied ✓"; },
+          function () { prompt("UPI ID:", pa); }
+        );
+      };
+    })();
+  </script>
+</body>
+</html>
