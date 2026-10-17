@@ -5,62 +5,86 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex">
   <title>Pay your due / బాకీ చెల్లించండి · GallaBook</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Telugu:wght@400;600;800&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
   <style>
-    :root { --brand: #0f7b5f; --text: #1b1f1d; --muted: #69716c; --line: #e2e6e1; --bg: #f2f4f1; --card: #fff; }
-    @media (prefers-color-scheme: dark) { :root { --text: #e9eeeb; --muted: #94a09a; --line: #2b322e; --bg: #111513; --card: #1b201d; } }
+    :root { --brand: #0f7b5f; --brand2: #13a37d; --text: #17201c; --muted: #66706b; --line: #e3e8e4; --bg: #eef3f0; --card: #fff; --due: #d23b2f; --soft: #e7f5ef; }
+    @media (prefers-color-scheme: dark) { :root { --text: #e9eeeb; --muted: #97a39d; --line: #2a322e; --bg: #0e1311; --card: #18201c; --soft: #15302a; --due: #ff6b5e; } }
     * { box-sizing: border-box; }
-    body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.45 "Noto Sans Telugu", "Noto Sans", system-ui, sans-serif; }
-    .wrap { max-width: 440px; margin: 0 auto; padding: 18px 16px 32px; display: flex; flex-direction: column; gap: 14px; }
-    .card { background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 18px; text-align: center; }
-    .shop { font-size: 20px; font-weight: 800; }
-    .to { color: var(--muted); font-size: 14px; word-break: break-all; }
-    .amt-label { color: var(--muted); font-size: 14px; margin-top: 10px; }
-    .amt { font-size: 44px; font-weight: 800; color: #c8372d; line-height: 1.15; }
+    [hidden] { display: none !important; }
+    body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.5 "Inter", "Noto Sans Telugu", system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+    .hero { background: linear-gradient(135deg, var(--brand), var(--brand2)); color: #fff; padding: 22px 16px 70px; text-align: center; border-radius: 0 0 28px 28px; }
+    .avatar { width: 58px; height: 58px; border-radius: 50%; background: rgba(255,255,255,.18); border: 2px solid rgba(255,255,255,.4); display: grid; place-items: center; margin: 0 auto 8px; font-size: 26px; font-weight: 800; }
+    .shop { font-size: 22px; font-weight: 800; letter-spacing: -.2px; }
+    .to { font-size: 13.5px; opacity: .85; word-break: break-all; }
+    .wrap { max-width: 440px; margin: -52px auto 0; padding: 0 16px 28px; display: flex; flex-direction: column; gap: 14px; }
+    .card { background: var(--card); border: 1px solid var(--line); border-radius: 22px; padding: 20px; text-align: center; box-shadow: 0 10px 30px rgba(15,60,45,.08); }
+    .amt-label { color: var(--muted); font-size: 13.5px; font-weight: 600; text-transform: uppercase; letter-spacing: .4px; }
+    .amt { font-size: 48px; font-weight: 800; color: var(--due); line-height: 1.1; margin: 4px 0; letter-spacing: -1px; }
     .note { color: var(--muted); font-size: 14px; }
-    .btn { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 16px; border-radius: 14px;
-           font-size: 18px; font-weight: 700; text-decoration: none; color: #fff; border: none; cursor: pointer; }
-    .phonepe { background: #5f259f; }
-    .gpay { background: #1a73e8; }
-    .logo { width: 30px; height: 30px; border-radius: 8px; background: #fff; display: grid; place-items: center; font-size: 15px; font-weight: 900; }
+    .part { margin-top: 12px; border: 1.5px dashed var(--brand); background: var(--soft); color: var(--brand); border-radius: 999px; padding: 9px 18px; font: inherit; font-size: 14.5px; font-weight: 700; cursor: pointer; }
+    @media (prefers-color-scheme: dark) { .part { color: #5fd3ad; border-color: #5fd3ad; } }
+    .partbox { margin-top: 12px; display: flex; gap: 6px; justify-content: center; align-items: center; font-size: 24px; font-weight: 800; }
+    .partbox input { width: 170px; font: inherit; padding: 8px 12px; border: 2px solid var(--brand); border-radius: 14px; background: var(--card); color: var(--text); text-align: center; outline: none; }
+    .partbox input:focus { box-shadow: 0 0 0 4px var(--soft); }
+    #partmsg:not(:empty) { margin-top: 10px; background: var(--soft); border-radius: 12px; padding: 8px 10px; color: var(--text); font-weight: 600; }
+    .btns { display: flex; flex-direction: column; gap: 10px; }
+    .btn { display: flex; align-items: center; gap: 14px; width: 100%; padding: 14px 18px; border-radius: 18px; font-size: 17.5px; font-weight: 700;
+           text-decoration: none; color: #fff; border: none; cursor: pointer; box-shadow: 0 6px 16px rgba(0,0,0,.14); transition: transform .1s; }
+    .btn:active { transform: scale(.98); }
+    .btn .arrow { margin-left: auto; font-size: 22px; opacity: .8; }
+    .phonepe { background: linear-gradient(135deg, #5f259f, #7b3fc4); }
+    .gpay { background: linear-gradient(135deg, #1a73e8, #3b8cff); }
+    .logo { width: 36px; height: 36px; border-radius: 10px; background: #fff; display: grid; place-items: center; font-size: 17px; font-weight: 900; flex: none; }
     .phonepe .logo { color: #5f259f; }
     .gpay .logo { color: #1a73e8; }
-    .help { color: var(--muted); font-size: 13.5px; text-align: center; margin: 0; }
-    #qr { display: inline-block; background: #fff; padding: 10px; border-radius: 12px; margin-top: 6px; }
-    #qr img { display: block; width: 210px; height: 210px; image-rendering: pixelated; }
-    .copy { margin-top: 10px; border: 1px solid var(--line); background: transparent; color: var(--text); border-radius: 10px; padding: 9px 14px; font: inherit; cursor: pointer; }
-    .part { margin-top: 10px; border: 1px solid var(--line); background: transparent; color: var(--brand); border-radius: 10px; padding: 9px 14px; font: inherit; font-weight: 700; cursor: pointer; }
-    .partbox { margin-top: 10px; display: flex; gap: 8px; justify-content: center; align-items: center; }
-    .partbox input { width: 150px; font: inherit; font-size: 22px; font-weight: 700; padding: 8px 10px; border: 2px solid var(--brand); border-radius: 10px; background: var(--card); color: var(--text); text-align: center; }
-    .err { background: #fde9e6; color: #c8372d; border-radius: 14px; padding: 16px; text-align: center; }
+    .steps { display: flex; justify-content: space-between; gap: 6px; text-align: center; font-size: 12.5px; color: var(--muted); }
+    .steps div { flex: 1; }
+    .steps b { display: grid; place-items: center; width: 26px; height: 26px; margin: 0 auto 4px; border-radius: 50%; background: var(--soft); color: var(--brand); font-size: 13px; }
+    .help { color: var(--muted); font-size: 13px; text-align: center; margin: 0; }
+    #qr { display: inline-block; background: #fff; padding: 12px; border-radius: 16px; margin-top: 10px; border: 1px solid var(--line); }
+    #qr img { display: block; width: 200px; height: 200px; image-rendering: pixelated; }
+    .copy { margin-top: 12px; border: 1px solid var(--line); background: var(--bg); color: var(--text); border-radius: 999px; padding: 9px 18px; font: inherit; font-size: 14.5px; font-weight: 600; cursor: pointer; }
+    .err { background: #fde9e6; color: #c8372d; border-radius: 18px; padding: 18px; text-align: center; margin-top: 60px; }
+    .foot { text-align: center; color: var(--muted); font-size: 12.5px; }
+    .foot b { color: var(--brand); }
+    .lock { text-align: center; font-size: 12.5px; color: var(--muted); }
   </style>
 </head>
 <body>
+  <div class="hero" id="hero">
+    <div class="avatar" id="avatar">₹</div>
+    <div class="shop" id="shop"></div>
+    <div class="to" id="to"></div>
+  </div>
   <div class="wrap">
     <div id="bad" class="err" hidden>This link is not valid. Please ask the shop to send it again.<br>ఈ లింక్ సరిగా లేదు. షాప్ వారిని మళ్లీ పంపమని అడగండి.</div>
-    <div id="ok" hidden>
+    <div id="ok" hidden style="display:flex;flex-direction:column;gap:14px">
       <div class="card">
-        <div class="shop" id="shop"></div>
-        <div class="to" id="to"></div>
-        <div class="amt-label">Amount to pay / చెల్లించాల్సిన మొత్తం</div>
+        <div class="amt-label">Amount due · చెల్లించాల్సిన బాకీ</div>
         <div class="amt" id="amt"></div>
         <div class="note" id="note"></div>
-        <button class="part" id="partbtn">Pay part amount / కొంత మొత్తం కట్టండి</button>
-        <div class="partbox" id="partbox" hidden>₹ <input id="partin" type="number" inputmode="decimal" min="1" step="0.01"></div>
+        <button class="part" id="partbtn">✎ Pay part amount · కొంత మొత్తం కట్టండి</button>
+        <div class="partbox" id="partbox" hidden>₹<input id="partin" type="number" inputmode="decimal" min="1" step="0.01" placeholder="0"></div>
         <div class="note" id="partmsg"></div>
       </div>
-      <div style="height:14px"></div>
-      <a id="pp" class="btn phonepe"><span class="logo">पे</span>Pay with PhonePe</a>
-      <div style="height:10px"></div>
-      <a id="gp" class="btn gpay"><span class="logo">G</span>Pay with Google Pay</a>
-      <p class="help" style="margin-top:12px">Tap a button — the app opens. Check the amount and enter your UPI PIN.<br>బటన్ నొక్కితే యాప్ తెరుచుకుంటుంది — మొత్తం చూసి UPI PIN ఎంటర్ చేయండి.</p>
-      <div style="height:14px"></div>
-      <div class="card">
-        <div class="note">Or scan this QR with another phone / లేదా వేరే ఫోన్‌తో ఈ QR స్కాన్ చేయండి</div>
-        <div id="qr"></div>
-        <div><button class="copy" id="copy">Copy UPI ID</button></div>
+      <div class="btns">
+        <a id="pp" class="btn phonepe"><span class="logo">पे</span>Pay with PhonePe<span class="arrow">›</span></a>
+        <a id="gp" class="btn gpay"><span class="logo">G</span>Pay with Google Pay<span class="arrow">›</span></a>
       </div>
+      <div class="steps">
+        <div><b>1</b>Tap button<br>బటన్ నొక్కండి</div>
+        <div><b>2</b>Check amount<br>మొత్తం చూడండి</div>
+        <div><b>3</b>Enter UPI PIN<br>PIN ఎంటర్ చేయండి</div>
+      </div>
+      <div class="card">
+        <div class="note">Or scan with another phone · లేదా వేరే ఫోన్‌తో స్కాన్ చేయండి</div>
+        <div id="qr"></div>
+        <div><button class="copy" id="copy">⧉ Copy UPI ID</button></div>
+      </div>
+      <div class="lock">🔒 Payment goes directly to the shop's bank via UPI</div>
     </div>
-    <p class="help">GallaBook</p>
+    <div class="foot">Powered by <b>GallaBook</b></div>
   </div>
   <script src="qrcode.js"></script>
   <script>
@@ -71,8 +95,9 @@
       var sh = (p.get("sh") || pn).trim();
       var am = Number(p.get("am") || 0);
       var tn = (p.get("tn") || "").trim();
-      if (!/^[\w.\-]{2,}@[\w.\-]{2,}$/.test(pa)) { document.getElementById("bad").hidden = false; return; }
+      if (!/^[\w.\-]{2,}@[\w.\-]{2,}$/.test(pa)) { document.getElementById("bad").hidden = false; document.getElementById("hero").hidden = true; return; }
       document.getElementById("ok").hidden = false;
+      document.getElementById("avatar").textContent = ((sh || pn || "₹").trim()[0] || "₹").toUpperCase();
 
       var enc = encodeURIComponent;
       var android = /Android/i.test(navigator.userAgent);
