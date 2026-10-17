@@ -28,13 +28,14 @@
     .partbox input { width: 170px; font: inherit; padding: 8px 12px; border: 2px solid var(--brand); border-radius: 14px; background: var(--card); color: var(--text); text-align: center; outline: none; }
     .partbox input:focus { box-shadow: 0 0 0 4px var(--soft); }
     #partmsg:not(:empty) { margin-top: 10px; background: var(--soft); border-radius: 12px; padding: 8px 10px; color: var(--text); font-weight: 600; }
-    .btns { display: flex; flex-direction: column; gap: 10px; }
-    .btn { display: flex; align-items: center; gap: 14px; width: 100%; padding: 14px 18px; border-radius: 18px; font-size: 17.5px; font-weight: 700;
+    .btns { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+    .btn { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 12px 4px; border-radius: 16px; font-size: 13.5px; font-weight: 700; white-space: nowrap;
            text-decoration: none; color: #fff; border: none; cursor: pointer; box-shadow: 0 6px 16px rgba(0,0,0,.14); transition: transform .1s; }
     .btn:active { transform: scale(.98); }
-    .btn .arrow { margin-left: auto; font-size: 22px; opacity: .8; }
     .phonepe { background: linear-gradient(135deg, #5f259f, #7b3fc4); }
     .gpay { background: linear-gradient(135deg, #1a73e8, #3b8cff); }
+    .paytm { background: linear-gradient(135deg, #00baf2, #002e6e); }
+    .paytm .logo { color: #002e6e; }
     .logo { width: 36px; height: 36px; border-radius: 10px; background: #fff; display: grid; place-items: center; font-size: 17px; font-weight: 900; flex: none; }
     .phonepe .logo { color: #5f259f; }
     .gpay .logo { color: #1a73e8; }
@@ -87,8 +88,9 @@
         <div class="note" id="partmsg"></div>
       </div>
       <div class="btns">
-        <a id="pp" class="btn phonepe"><span class="logo">पे</span>Pay with PhonePe<span class="arrow">›</span></a>
-        <a id="gp" class="btn gpay"><span class="logo">G</span>Pay with Google Pay<span class="arrow">›</span></a>
+        <a id="pp" class="btn phonepe"><span class="logo">पे</span>PhonePe</a>
+        <a id="gp" class="btn gpay"><span class="logo">G</span>Google Pay</a>
+        <a id="pt" class="btn paytm"><span class="logo">P</span>Paytm</a>
       </div>
       <div class="card how">
         <svg class="anim" viewBox="0 0 320 160" role="img" aria-label="Pay from your phone to the shop">
@@ -120,7 +122,7 @@
           <g class="ok"><circle cx="262" cy="40" r="16" fill="#1fb57a"/><path d="M254 40 l6 6 l11 -12" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></g>
         </svg>
       <div class="steps">
-        <div><b>1</b>Tap button<br>బటన్ నొక్కండి</div>
+        <div><b>1</b>Tap your app<br>మీ యాప్ నొక్కండి</div>
         <div><b>2</b>Check amount<br>మొత్తం చూడండి</div>
         <div><b>3</b>Enter UPI PIN<br>PIN ఎంటర్ చేయండి</div>
       </div>
@@ -161,6 +163,7 @@
         var intent = function (pkg) { return "intent://pay?" + q + "#Intent;scheme=upi;package=" + pkg + ";end"; };
         document.getElementById("pp").href = android ? intent("com.phonepe.app") : ios ? "phonepe://pay?" + q : "upi://pay?" + q;
         document.getElementById("gp").href = android ? intent("com.google.android.apps.nbu.paisa.user") : ios ? "gpay://upi/pay?" + q : "upi://pay?" + q;
+        document.getElementById("pt").href = android ? intent("net.one97.paytm") : ios ? "paytmmp://pay?" + q : "upi://pay?" + q;
         var qr = qrcode(0, "M");
         qr.addData("upi://pay?" + q);
         qr.make();
