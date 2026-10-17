@@ -4,6 +4,11 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#0f7b5f">
+  <meta property="og:title" content="Pay your due · బాకీ చెల్లించండి">
+  <meta property="og:description" content="Pay securely with PhonePe, Google Pay or Paytm · GallaBook">
+  <meta property="og:site_name" content="GallaBook">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230f7b5f'/%3E%3Ctext x='16' y='22' font-size='18' font-family='Arial' font-weight='bold' fill='white' text-anchor='middle'%3EG%3C/text%3E%3C/svg%3E">
   <title>Pay your due / బాకీ చెల్లించండి · GallaBook</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Telugu:wght@400;600;800&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
@@ -61,12 +66,16 @@
     #qr img { display: block; width: 200px; height: 200px; image-rendering: pixelated; }
     .copy { margin-top: 12px; border: 1px solid var(--line); background: var(--bg); color: var(--text); border-radius: 999px; padding: 9px 18px; font: inherit; font-size: 14.5px; font-weight: 600; cursor: pointer; }
     .err { background: #fde9e6; color: #c8372d; border-radius: 18px; padding: 18px; text-align: center; margin-top: 60px; }
-    .foot { text-align: center; color: var(--muted); font-size: 12.5px; }
-    .foot { display: flex; flex-direction: column; align-items: center; gap: 2px; padding-top: 6px; border-top: 1px solid var(--line); }
+    .foot { text-align: center; color: var(--muted); font-size: 12.5px; display: flex; flex-direction: column; align-items: center; gap: 2px; padding-top: 6px; border-top: 1px solid var(--line); }
     .foot .brand { display: flex; align-items: center; gap: 6px; font-size: 15px; }
     .foot b { color: var(--brand); font-weight: 800; letter-spacing: -.2px; }
     .bmark { width: 20px; height: 20px; border-radius: 6px; background: linear-gradient(135deg, var(--brand), var(--brand2)); color: #fff; display: grid; place-items: center; font-size: 12px; font-weight: 800; }
     .co { font-weight: 600; color: var(--text); }
+    .ok-wrap { display: flex; flex-direction: column; gap: 14px; }
+    .full { margin-top: 8px; background: none; border: none; color: var(--muted); font: inherit; font-size: 13px; text-decoration: underline; cursor: pointer; }
+    #partmsg.warn { background: #fde9e6; color: #c8372d; }
+    .copies { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+    .desk { background: var(--soft); border-radius: 14px; padding: 10px 12px; font-size: 13.5px; text-align: center; }
     .lock { text-align: center; font-size: 12.5px; color: var(--muted); }
   </style>
 </head>
@@ -78,7 +87,7 @@
   </div>
   <div class="wrap">
     <div id="bad" class="err" hidden>This link is not valid. Please ask the shop to send it again.<br>ఈ లింక్ సరిగా లేదు. షాప్ వారిని మళ్లీ పంపమని అడగండి.</div>
-    <div id="ok" hidden style="display:flex;flex-direction:column;gap:14px">
+    <div id="ok" class="ok-wrap" hidden>
       <div class="card">
         <div class="amt-label">Amount due · చెల్లించాల్సిన బాకీ</div>
         <div class="amt" id="amt"></div>
@@ -86,7 +95,9 @@
         <button class="part" id="partbtn">✎ Pay part amount · కొంత మొత్తం కట్టండి</button>
         <div class="partbox" id="partbox" hidden>₹<input id="partin" type="number" inputmode="decimal" min="1" step="0.01" placeholder="0"></div>
         <div class="note" id="partmsg"></div>
+        <button class="full" id="fullbtn" hidden>Pay full amount instead · మొత్తం బాకీ కట్టండి</button>
       </div>
+      <div class="desk" id="desk" hidden>📱 Open this link on your phone to pay with an app, or scan the QR below.<br>ఫోన్‌లో ఈ లింక్ ఓపెన్ చేయండి లేదా కింద QR స్కాన్ చేయండి.</div>
       <div class="btns">
         <a id="pp" class="btn phonepe"><span class="logo">पे</span>PhonePe</a>
         <a id="gp" class="btn gpay"><span class="logo">G</span>Google Pay</a>
@@ -130,7 +141,7 @@
       <div class="card">
         <div class="note">Or scan with another phone · లేదా వేరే ఫోన్‌తో స్కాన్ చేయండి</div>
         <div id="qr"></div>
-        <div><button class="copy" id="copy">⧉ Copy UPI ID</button></div>
+        <div class="copies"><button class="copy" id="copy">⧉ Copy UPI ID</button><button class="copy" id="copyamt">⧉ Copy amount</button></div>
       </div>
       <div class="lock">🔒 Payment goes directly to the shop's bank via UPI</div>
     </div>
@@ -157,7 +168,9 @@
       var fmt = function (n) { return "₹" + n.toLocaleString("en-IN", { maximumFractionDigits: 2 }); };
       qrcode.stringToBytes = qrcode.stringToBytesFuncs["UTF-8"];
 
+      var paying = am;
       function render(pay) {
+        paying = pay;
         var q = "pa=" + enc(pa) + "&pn=" + enc(pn || sh || "Shop") + (pay > 0 ? "&am=" + pay.toFixed(2) : "") + "&cu=INR" + (tn ? "&tn=" + enc(tn) : "");
         var intent = function (pkg) { return "intent://pay?" + q + "#Intent;scheme=upi;package=" + pkg + ";end"; };
         document.getElementById("pp").href = android ? intent("com.phonepe.app") : ios ? "phonepe://pay?" + q : "upi://pay?" + q;
@@ -167,7 +180,9 @@
         qr.addData("upi://pay?" + q);
         qr.make();
         document.getElementById("qr").innerHTML = qr.createImgTag(6, 0);
-        document.getElementById("partmsg").textContent = pay > 0 && pay < am
+        var msg = document.getElementById("partmsg");
+        msg.className = "note";
+        msg.textContent = pay > 0 && pay < am
           ? "Paying " + fmt(pay) + " now · Balance " + fmt(Math.round((am - pay) * 100) / 100) + " / మిగిలిన బాకీ"
           : "";
       }
@@ -176,7 +191,8 @@
       document.getElementById("to").textContent = "UPI: " + pa;
       document.getElementById("amt").textContent = am > 0 ? fmt(am) : "—";
       document.getElementById("note").textContent = tn;
-      document.title = (sh || pn) + " – ₹" + am;
+      document.title = (sh || pn) + " – " + (am > 0 ? fmt(am) : "Pay");
+      if (!android && !ios) document.getElementById("desk").hidden = false;
       render(am);
 
       var partbtn = document.getElementById("partbtn"), partin = document.getElementById("partin");
@@ -186,20 +202,37 @@
         partbtn.hidden = true;
         document.getElementById("partbox").hidden = false;
         partin.value = "";
+        document.getElementById("fullbtn").hidden = false;
         partin.focus();
+      };
+      document.getElementById("fullbtn").onclick = function () {
+        this.hidden = true;
+        document.getElementById("partbox").hidden = true;
+        partbtn.hidden = false;
+        render(am);
       };
       partin.oninput = function () {
         var v = Math.round(Number(partin.value) * 100) / 100;
         render(v > 0 && v < am ? v : am);
+        if (v >= am) {
+          var msg = document.getElementById("partmsg");
+          msg.className = "note warn";
+          msg.textContent = "More than due — full " + fmt(am) + " will be paid / బాకీ కంటే ఎక్కువ";
+        }
       };
 
-      document.getElementById("copy").onclick = function () {
-        var b = this;
-        (navigator.clipboard ? navigator.clipboard.writeText(pa) : Promise.reject()).then(
-          function () { b.textContent = "Copied ✓"; },
-          function () { prompt("UPI ID:", pa); }
-        );
-      };
+      function copier(btn, label, get) {
+        btn.onclick = function () {
+          var t = get();
+          (navigator.clipboard ? navigator.clipboard.writeText(t) : Promise.reject()).then(
+            function () { btn.textContent = "Copied ✓"; setTimeout(function () { btn.textContent = label; }, 2000); },
+            function () { prompt(label.replace("⧉ ", "") + ":", t); }
+          );
+        };
+      }
+      copier(document.getElementById("copy"), "⧉ Copy UPI ID", function () { return pa; });
+      var ca = document.getElementById("copyamt");
+      if (am > 0) copier(ca, "⧉ Copy amount", function () { return paying.toFixed(2); }); else ca.hidden = true;
     })();
   </script>
 </body>
