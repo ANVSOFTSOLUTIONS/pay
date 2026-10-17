@@ -14,13 +14,13 @@
     [hidden] { display: none !important; }
     body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.5 "Inter", "Noto Sans Telugu", system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
     .hero { background: linear-gradient(135deg, var(--brand), var(--brand2)); color: #fff; padding: 22px 16px 70px; text-align: center; border-radius: 0 0 28px 28px; }
-    .avatar { width: 58px; height: 58px; border-radius: 50%; background: rgba(255,255,255,.18); border: 2px solid rgba(255,255,255,.4); display: grid; place-items: center; margin: 0 auto 8px; font-size: 26px; font-weight: 800; }
+    .avatar { width: 42px; height: 42px; border-radius: 50%; background: rgba(255,255,255,.18); border: 2px solid rgba(255,255,255,.4); display: grid; place-items: center; margin: 0 auto 8px; font-size: 26px; font-weight: 800; }
     .shop { font-size: 22px; font-weight: 800; letter-spacing: -.2px; }
     .to { font-size: 13.5px; opacity: .85; word-break: break-all; }
     .wrap { max-width: 440px; margin: -52px auto 0; padding: 0 16px 28px; display: flex; flex-direction: column; gap: 14px; }
     .card { background: var(--card); border: 1px solid var(--line); border-radius: 22px; padding: 20px; text-align: center; box-shadow: 0 10px 30px rgba(15,60,45,.08); }
     .amt-label { color: var(--muted); font-size: 13.5px; font-weight: 600; text-transform: uppercase; letter-spacing: .4px; }
-    .amt { font-size: 48px; font-weight: 800; color: var(--due); line-height: 1.1; margin: 4px 0; letter-spacing: -1px; }
+    .amt { font-size: 36px; font-weight: 800; color: var(--due); line-height: 1.1; margin: 4px 0; letter-spacing: -1px; }
     .note { color: var(--muted); font-size: 14px; }
     .part { margin-top: 12px; border: 1.5px dashed var(--brand); background: var(--soft); color: var(--brand); border-radius: 999px; padding: 9px 18px; font: inherit; font-size: 14.5px; font-weight: 700; cursor: pointer; }
     @media (prefers-color-scheme: dark) { .part { color: #5fd3ad; border-color: #5fd3ad; } }
@@ -72,7 +72,7 @@
 </head>
 <body>
   <div class="hero" id="hero">
-    <div class="avatar" id="avatar">₹</div>
+    <div class="avatar"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9l1.5-5h15L21 9"/><path d="M3 9a3 3 0 0 0 6 0a3 3 0 0 0 6 0a3 3 0 0 0 6 0"/><path d="M5 12v8h14v-8"/><path d="M10 20v-5h4v5"/></svg></div>
     <div class="shop" id="shop"></div>
     <div class="to" id="to"></div>
   </div>
@@ -150,7 +150,6 @@
       var tn = (p.get("tn") || "").trim();
       if (!/^[\w.\-]{2,}@[\w.\-]{2,}$/.test(pa)) { document.getElementById("bad").hidden = false; document.getElementById("hero").hidden = true; return; }
       document.getElementById("ok").hidden = false;
-      document.getElementById("avatar").textContent = ((sh || pn || "₹").trim()[0] || "₹").toUpperCase();
 
       var enc = encodeURIComponent;
       var android = /Android/i.test(navigator.userAgent);
