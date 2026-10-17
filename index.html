@@ -41,6 +41,20 @@
     .steps { display: flex; justify-content: space-between; gap: 6px; text-align: center; font-size: 12.5px; color: var(--muted); }
     .steps div { flex: 1; }
     .steps b { display: grid; place-items: center; width: 26px; height: 26px; margin: 0 auto 4px; border-radius: 50%; background: var(--soft); color: var(--brand); font-size: 13px; }
+    .anim { display: block; width: 100%; max-width: 320px; height: auto; margin: 0 auto 6px; }
+    .anim .coin { animation: fly 3.2s ease-in-out infinite; }
+    .anim .c2 { animation-delay: .35s; } .anim .c3 { animation-delay: .7s; }
+    .anim .tap { transform-origin: 112px 118px; animation: tap 3.2s ease-in-out infinite; }
+    .anim .scr { animation: scr 3.2s steps(1) infinite; }
+    .anim .ok { opacity: 0; transform-origin: 262px 58px; animation: ok 3.2s ease-out infinite; }
+    .anim .shopb { transform-origin: 262px 110px; animation: bump 3.2s ease-out infinite; }
+    @keyframes tap { 0%,10% { transform: translate(14px,22px); opacity: 0 } 20% { transform: translate(0,0); opacity: 1 } 26% { transform: scale(.85) } 32% { transform: scale(1) } 45%,100% { opacity: 0 } }
+    @keyframes fly { 0%,30% { transform: translate(0,0); opacity: 0 } 36% { opacity: 1 } 62% { transform: translate(140px,-6px); opacity: 1 } 68%,100% { transform: translate(140px,-6px); opacity: 0 } }
+    @keyframes ok { 0%,64% { opacity: 0; transform: scale(.3) } 72% { opacity: 1; transform: scale(1.15) } 78%,92% { opacity: 1; transform: scale(1) } 100% { opacity: 0 } }
+    @keyframes bump { 0%,62% { transform: scale(1) } 68% { transform: scale(1.07) } 76%,100% { transform: scale(1) } }
+    @keyframes scr { 0% { fill: #5f259f } 28% { fill: var(--brand) } 92% { fill: #5f259f } }
+    @media (prefers-reduced-motion: reduce) { .anim * { animation: none !important; } .anim .ok { opacity: 1; } }
+    .how { padding: 16px 14px 14px; }
     .help { color: var(--muted); font-size: 13px; text-align: center; margin: 0; }
     #qr { display: inline-block; background: #fff; padding: 12px; border-radius: 16px; margin-top: 10px; border: 1px solid var(--line); }
     #qr img { display: block; width: 200px; height: 200px; image-rendering: pixelated; }
@@ -76,10 +90,40 @@
         <a id="pp" class="btn phonepe"><span class="logo">पे</span>Pay with PhonePe<span class="arrow">›</span></a>
         <a id="gp" class="btn gpay"><span class="logo">G</span>Pay with Google Pay<span class="arrow">›</span></a>
       </div>
+      <div class="card how">
+        <svg class="anim" viewBox="0 0 320 160" role="img" aria-label="Pay from your phone to the shop">
+          <ellipse cx="160" cy="150" rx="140" ry="6" fill="var(--soft)"/>
+          <!-- phone -->
+          <rect x="70" y="18" width="78" height="128" rx="14" fill="#1d2420"/>
+          <rect class="scr" x="76" y="30" width="66" height="104" rx="8" fill="#5f259f"/>
+          <rect x="99" y="23" width="20" height="3" rx="1.5" fill="#3a4540"/>
+          <text x="109" y="62" text-anchor="middle" font-size="11" fill="#fff" opacity=".85" font-family="Inter,sans-serif">UPI</text>
+          <text x="109" y="84" text-anchor="middle" font-size="20" font-weight="800" fill="#fff" font-family="Inter,sans-serif">₹</text>
+          <rect x="88" y="104" width="42" height="16" rx="8" fill="#fff"/>
+          <text x="109" y="115.5" text-anchor="middle" font-size="9" font-weight="800" fill="#1d2420" font-family="Inter,sans-serif">PAY</text>
+          <!-- finger -->
+          <g class="tap"><circle cx="112" cy="118" r="9" fill="#f2c49b" stroke="#d9a274" stroke-width="2"/><circle cx="112" cy="118" r="15" fill="none" stroke="#fff" stroke-width="2" opacity=".6"/></g>
+          <!-- coins -->
+          <g font-family="Inter,sans-serif" font-weight="800" font-size="11" text-anchor="middle">
+            <g class="coin"><circle cx="130" cy="70" r="10" fill="#f5b800" stroke="#d89b00" stroke-width="2"/><text x="130" y="74" fill="#8a5a00">₹</text></g>
+            <g class="coin c2"><circle cx="130" cy="88" r="8" fill="#f5b800" stroke="#d89b00" stroke-width="2"/><text x="130" y="91.5" fill="#8a5a00" font-size="9">₹</text></g>
+            <g class="coin c3"><circle cx="130" cy="54" r="7" fill="#f5b800" stroke="#d89b00" stroke-width="2"/><text x="130" y="57" fill="#8a5a00" font-size="8">₹</text></g>
+          </g>
+          <!-- shop -->
+          <g class="shopb">
+            <rect x="228" y="84" width="68" height="60" rx="6" fill="var(--card)" stroke="var(--brand)" stroke-width="3"/>
+            <path d="M222 86 L232 62 H292 L302 86 Z" fill="var(--brand)"/>
+            <path d="M234 86 v6 a8 8 0 0 0 16 0 v-6 M250 86 v6 a8 8 0 0 0 16 0 v-6 M266 86 v6 a8 8 0 0 0 16 0 v-6 M282 86 v6 a8 8 0 0 0 16 0 v-6" fill="#fff" stroke="var(--brand)" stroke-width="2"/>
+            <rect x="252" y="112" width="20" height="32" rx="3" fill="var(--brand2)"/>
+          </g>
+          <!-- success -->
+          <g class="ok"><circle cx="262" cy="40" r="16" fill="#1fb57a"/><path d="M254 40 l6 6 l11 -12" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></g>
+        </svg>
       <div class="steps">
         <div><b>1</b>Tap button<br>బటన్ నొక్కండి</div>
         <div><b>2</b>Check amount<br>మొత్తం చూడండి</div>
         <div><b>3</b>Enter UPI PIN<br>PIN ఎంటర్ చేయండి</div>
+      </div>
       </div>
       <div class="card">
         <div class="note">Or scan with another phone · లేదా వేరే ఫోన్‌తో స్కాన్ చేయండి</div>
