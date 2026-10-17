@@ -141,7 +141,7 @@
       <div class="card">
         <div class="note">Or scan with another phone · లేదా వేరే ఫోన్‌తో స్కాన్ చేయండి</div>
         <div id="qr"></div>
-        <div class="copies"><button class="copy" id="copy">⧉ Copy UPI ID</button><button class="copy" id="copyamt">⧉ Copy amount</button></div>
+        <div class="copies"><button class="copy" id="copy">⧉ Copy UPI ID</button></div>
       </div>
       <div class="lock">🔒 Payment goes directly to the shop's bank via UPI</div>
     </div>
@@ -231,8 +231,6 @@
         };
       }
       copier(document.getElementById("copy"), "⧉ Copy UPI ID", function () { return pa; });
-      var ca = document.getElementById("copyamt");
-      if (am > 0) copier(ca, "⧉ Copy amount", function () { return paying.toFixed(2); }); else ca.hidden = true;
     })();
   </script>
 </body>
